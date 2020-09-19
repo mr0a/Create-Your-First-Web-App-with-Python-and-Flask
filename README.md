@@ -25,7 +25,8 @@ if __name__ == '__main__':
     * This will start a web server listening on port 5000. If you open the port using your favourite browser you will get 404 Page Not Found as we havent set the web server to do anything when someone access any webpage.
 * We need to use route to show content when someone access.  
 ```python3
-@app.route('/')
+@app.route('/') 
+# This is a decorator to tell our server that we need to run index function at '/'.
 def index():
     return "Hello World"
 ```
