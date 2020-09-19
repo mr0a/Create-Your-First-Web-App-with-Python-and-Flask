@@ -33,4 +33,6 @@ def index():
     return "Hello World"
 ```
 This is a simple route which returns "Hello World" when root page is accessed.  
-Here python decorator is used.
+Now our server knows that it has to fun the function when "/" route is accessed.
+
+## Video 3: Templates
