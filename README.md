@@ -137,9 +137,43 @@ def about():
 Lets create a new file `forms.py` and we will use this to import in our main code.  
 >forms.py
 ```python3
-from flask.wtf import Flaskform
+from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 ```
-    * StringField - is equivalent to the text field we use in HTML forms
-    * SubmitField - I guess you know it
+* StringField - is equivalent to the text field we use in HTML forms
+* SubmitField - I guess you know it
+* When we use wtforms we make classes which extend from class `Flaskform`  
+> forms.py
+```python3
+class AddTaskForm(FlaskForm):
+    title = Stringfield('Title', validators = [DataRequires()])
+# To use validator import - from wtforms.validators import DataRequired
+    submit = SubmitField('Submit')
+```
+* Now we have created the form class let's import it and create a form in about page
+> forms.py
+```python3
+import forms
+...
+def about():
+    form = forms.AddTaskForm()
+    return render_template('about.html', form = form)
+```
+* Now the form is accessible in the `about.html` template
+But before setting up the form, Flask forms implement a security feature `csrf_token()` to prevent cross-site-forgery-request.  
+Also the `csrf_token()` function needs a *secret key* to generate tokens.
 
+* In `app.py` add `app.config['SECRET_KEY'] = 'some-secret'` after instanciating flask app.
+* Now lets add the form in `about.html`  
+> about.html
+```html
+<form method="post">
+    {{ form.csrf_token() }} <!--To generate csrf token-->
+    {{ form.title }}
+    {{ form.submit }}
+</form>
+```
+* Now a secure form will be added in the about page of our website.
+* If you submit any data using the form it will show Method not allowed error.
+
+## Video 6: Handling POST Requests
