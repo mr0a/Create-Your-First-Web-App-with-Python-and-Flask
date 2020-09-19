@@ -18,7 +18,6 @@ The starter files are in the templates/starter folder.
 ```python3
 if __name__ == '__main__':
     app.run(debug=True)
-    
 ```
 * debug is optional and set to true:
     *  View error in our webpage if occurs.
@@ -32,7 +31,37 @@ if __name__ == '__main__':
 def index():
     return "Hello World"
 ```
-This is a simple route which returns "Hello World" when root page is accessed.  
+This is a simple route which returns "Hello World" (you can return any html too) when root page is accessed.  
 Now our server knows that it has to fun the function when "/" route is accessed.
 
 ## Video 3: Templates
+* In `return "Hello World"` instead of html or text you can return a html page using render_template function in flask.
+    ```python3
+    from flask import render_template
+    ...
+    def index():
+        return render_template('index.html')
+    ...
+
+    ```
+    * Place the html files inside a directory named `templates`.
+* Another cool thing in **jinja** (a templating engine) is that you can pass information and use it in your templates.
+    >app.py  
+    ```python3
+    def index():
+        return render_template('index.html',current_title = "Custom")
+    ```
+    * Now the variable current_title is accessible in the html by **{{ current_title }}**
+    > index.html  
+    ```
+    <!DOCTYPE html>
+        <html>
+    <head>
+        <title>{{current_title}}</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+    </body>
+    </html>
+```
+* This is pretty powerful because we can create dynamic web pages using these templates very easily.
