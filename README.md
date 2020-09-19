@@ -177,3 +177,21 @@ Also the `csrf_token()` function needs a *secret key* to generate tokens.
 * If you submit any data using the form it will show Method not allowed error.
 
 ## Video 6: Handling POST Requests
+By default flask expects for `GET` requests. We can modify to allow `POST` requests.  
+* To do that we need to pass argument method to route as follows:  
+`@app.route('/about', method = ['GET', 'POST'])`  
+Now the about page accepts `POST` requests and the values are accessible to us.
+* Add the following code to the function def of about about page (the form accepting page):
+```python3
+if form.validate_on_submit():
+    print("Submitted value is ", form.title.data)
+    return render_template('about.html', form = form, data = form.title.data)
+```
+* Now we will be able to see the POST data submitted from the terminal as well as it is also available in `about.html` template in data variable.
+> about.html
+```html
+...
+{% if data %}
+    <h1>{{ data }}</h1>
+{% endif %} <!--In jinja templates all the block must have end block-->
+```
