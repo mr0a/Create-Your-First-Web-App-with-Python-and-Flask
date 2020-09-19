@@ -20,7 +20,9 @@ if __name__ == '__main__':
     app.run(debug=True)
     
 ```
-* debug is optional and set to true to view error in our webpage if occurs. 
+* debug is optional and set to true:
+    *  View error in our webpage if occurs.
+    * The server automatically reloads when any change is made to the files. :smile: 
 * Run the app using `python3 app.py` in terminal.  
     * This will start a web server listening on port 5000. If you open the port using your favourite browser you will get 404 Page Not Found as we havent set the web server to do anything when someone access any webpage.
 * We need to use route to show content when someone access.  
