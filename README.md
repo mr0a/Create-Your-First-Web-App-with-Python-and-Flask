@@ -193,5 +193,86 @@ if form.validate_on_submit():
 ...
 {% if data %}
     <h1>{{ data }}</h1>
-{% endif %} <!--In jinja templates all the block must have end block-->
+{% endif %} <!--In jinja templates all the blocks must be closed explicitly-->
 ```
+## Video 6: SQLAlchemy
+SQLAlchemy is an ORM - Object Relational Mapper which serves like a front-end for Databases.  
+We will use it to create a db to store our tasks and time the tasks are added.  
+Import - `from flask_sqlalchemy import SQLAlchemy`
+>app.py
+```python3
+...
+#Add after instantiating flask app
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+
+db = SQLAlchemy(app)
+```
+* Now we have the instance of database in db but we donot have any data model(table).
+* Lets create model in new file `models.py`
+>models.py
+```python3
+from app import db
+
+class Tasks(db.Model):
+#Our model extends from Model class
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable = False)
+    date = db.Column(db.Date, nullable = False)
+```
+* Now we have designed the Task model for storing data.
+* We are ready with everything other than a database which we will be creating now.
+    * Open terminal and run `python3` in directory of app
+    * `from app import db` - just for safe access import this and next from models
+    * `from models import db` to import db(from models which is aware of Task table while db from app doesnot know about Task table)
+    * `db.create_all()` to create the db with our data model.
+    * Now you should see a `data.db` file in your directory
+* Testing our data model
+    * Open python in terminal and import Task `from models import Task`
+    * Datetime import - `from datetime import datetime`
+    * `t = Task(title="abc", date = datetime.utcnow())`
+    * `db.session.add(t)` - To add instance of Task into our table.
+    * `db.session.commit()` - To commit changes made into our db. 
+    * `Task.query.all()` - To check all columns in our table.
+* Now our db with SQLAlchemy is all set to go.
+
+## Video 7:
+* Now we will create instance of Task from the post data.
+* Import Task from models into routes - `from models import Task`
+>routes.py
+```python3
+...
+if form.validate_on_submit():
+    t = Task(title=form.title.data, date=datetime.utcnow())
+    db.session.add(t)
+    db.session.commit()
+    print(Task.query.all()) #To check the data added to our table
+```
+* Now this gets the form data and creates a task and adds it to our database.
+* Now lets redirect once user submits form
+> routes.py
+```python3
+from flask import redirect, url_for
+...
+# After commiting to db
+return redirect(url_for('index')) # Pass function of endpoint for url_for
+```
+* Now lets show the list of tasks in index page
+>routes.py
+    ```python3
+    tasks = Task.query.all() #In the route to index
+    return render_template('index.html', tasks = tasks)
+```
+* Now the tasks information is available in the index template
+> index.html
+```html
+{% block main %}
+<h1>Tasks</h1>
+<ul>
+    {% for task in tasks %}
+    <li>{{task.title}} created on {{task.date}}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+```
+* Now will be able add tasks, after adding get redirected to index page and view added tasks.
+* Lets rename the `about` page to `add`, function to add and set links to add using `url_for()` 
