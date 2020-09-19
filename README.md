@@ -35,7 +35,7 @@ This is a simple route which returns "Hello World" (you can return any html too)
 Now our server knows that it has to fun the function when "/" route is accessed.
 
 ## Video 3: Templates
-* In `return "Hello World"` instead of html or text you can return a html page using render_template function in flask.
+* In `return "Hello World"` instead of html or text you can return a html templates(jinja2 templating engine) using render_template function in flask.
     ```python3
     from flask import render_template
     ...
@@ -45,7 +45,7 @@ Now our server knows that it has to fun the function when "/" route is accessed.
 
     ```
     * Place the html files inside a directory named `templates`.
-* Another cool thing in **jinja** (a templating engine) is that you can pass information and use it in your templates.
+* Another cool thing in **jinja2** (a templating engine) is that you can pass information and use it in your templates.
     >app.py  
     ```python3
     def index():
@@ -63,5 +63,38 @@ Now our server knows that it has to fun the function when "/" route is accessed.
         <h1>Hello World!</h1>
     </body>
     </html>
-```
+    ```
 * This is pretty powerful because we can create dynamic web pages using these templates very easily.
+* Now you can create a basic web server which serves dynamic webpages at any route address.
+
+## Video 4: Extending HTML Templates
+
+Let's assume there are two pages in our site `index.html` and `about.html`.  
+There maybe common code in both the pages except some difference in the page content.  
+We can extend templates to prevent rewriting of code.  
+> base.html
+ ```html
+    <h1>Title of the Website</h1>
+    <h3>Subheader: something</h3>
+    <hr>
+    <p> <a href='/'>Index Page</a> &nbsp; <a href="/about">About Page</a></p>
+
+    {% block main%}
+
+    {% endblock main%}
+```
+* `{% block main %}` will let us to add different content at different pages or different parts of a same page with similar other blocks.
+> index.html
+```html
+{% extends "base.html" %}
+```
+* This will add the content of `base.html` in the index page.
+> about.html
+```html
+{% extends "base.html"%}
+
+{% block main %}
+<p>This is about page</p>
+{% endblock %} <--It will automatically find the end block(main)-->
+```
+
