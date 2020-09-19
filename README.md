@@ -95,6 +95,51 @@ We can extend templates to prevent rewriting of code.
 
 {% block main %}
 <p>This is about page</p>
-{% endblock %} <--It will automatically find the end block(main)-->
+{% endblock %} <--It will automatically find the endblock(main)-->
 ```
+* Now we have learnt jinja templating, so we can create templates easily.
+
+## Video 5: Refactoring and Forms
+If we have a large website with many routes putting all code in a same file is not easy to manage.  
+So code refactoring makes it easy to manage code.
+* Now we will move the routes information into another file `routes.py` and import it into our `app.py`.
+>app.py
+```python3
+from flask import Flask
+
+# Create a instance of flask app
+#You can call it with anyname
+app = Flask(__name__) # Pass the name to the flask initializer
+
+#import routes after instanciating flask app
+from routes import *
+# This is equivalent to copying all codes here
+
+if  __name__ == '__main__':
+    app.run(debug=True)
+```
+>routes.py
+```python3
+from app import app
+from flask import render_template
+
+@app.route('/')
+@app.route('/index') 
+# We can also use same function for multiple routes.
+def index():
+    return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+```
+* Now we have reformatted our code lets proceed with forms.  
+Lets create a new file `forms.py` and we will use this to import in our main code.  
+>forms.py
+```python3
+from flask.wtf import Flaskform
+from wtforms import StringField, SubmitField
+```
+    * StringField - is equivalent to the text field we use in HTML forms
+    * SubmitField - I guess you know it
 
