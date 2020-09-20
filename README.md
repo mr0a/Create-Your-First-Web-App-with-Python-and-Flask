@@ -275,4 +275,95 @@ return redirect(url_for('index')) # Pass function of endpoint for url_for
 {% endblock %}
 ```
 * Now will be able add tasks, after adding get redirected to index page and view added tasks.
-* Lets rename the `about` page to `add`, function to add and set links to add using `url_for()` 
+* Lets rename the `about` page to `add`, its function to add and set links to add using `url_for()`
+
+**Now we have a functional web app where you can a add tasks and view added tasks**
+
+## Video 10: Updating the Templates
+* Replace the files from starter directory with the files in the templates directory.  
+After replacing the files our app should show a bunch of errors because the files have more functionality like edit, flash messages, etc which we havent implemented yet.
+* So take a look at the code in the templates and try to figure out how to add those functionalities.
+* To show flash messages (display once and gone) we need to import flash from flask  
+`from flask import flash`
+* Add `flash("Task Added")` to index route after task is committed to the db, to show a flash message.
+* Put a placeholder(`#`) for href to pages we havent created so that we will be able to view page without errors.
+
+## Video 11: Edit
+> base.html
+```python3
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-primary">
+            {{ message }}
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <br>
+    {% block main %}{% endblock %}
+```
+* This will get flash messages which and display above main block of pages which extends from `base.html`  
+    *   We need to import `from flask import get_flashed_messages` to get and show flashed messages.
+>routes.py
+```python3
+@app.route('/edit/<int:task_id>')#<int:var_name> is a way to pass info to our function
+def edit(task_id):
+    task = Task.query.get(task_id)
+    print(task)
+    return redirect(url_for('index'))
+```
+* In index.html change edit links to `<a href="{{ url_for('edit', task_id = task.id) }}">`
+* Now if we click on edit we will see the task information in terminal and page gets redirected back to the index page.
+> routes.py
+```python3
+@app.route('/edit/<int:task_id>', methods=['GET','POST'])#<int:var_name> is a way to pass info to our function
+def edit(task_id):
+    task = Task.query.get(task_id)
+    #print(task)
+    form = forms.AddTaskForm()
+    
+    #Runs if task exists on db
+    if task:
+        if form.validate_on_submit(): #Runs on post data
+            task.title = form.title.data #Update title
+            task.date = datetime.utcnow() #Update time
+            db.session.commit() # Save changes in db
+            flash("Task Updated") # Show flash message in index page
+            return redirect(url_for('index')) #Redirect to index
+
+        #Runs if user doesnot submit post data
+        form.title.data = task.title # To show value from db in the form
+        return render_template('edit.html',form=form, task_id=task_id)
+    return redirect(url_for('index'))
+```
+* Now there could be some minor changes in the files which you can do on yourself.
+
+## Video 11: Delete
+* By now you have got lot of knowledge working with flask and routes so i am not going to explain all the code hereafter.
+> routes.py
+```python3
+@app.route('/delete/<int:task_id>', methods = ['GET', 'POST'])
+def delete(task_id):
+    task = Task.query.get(task_id)
+    form = forms.DeleteForm() # A form with just a SubmitField()
+    if task:
+        if form.validate_on_submit():
+            db.session.delete(task)
+            db.session.commit()
+            flash("Task deleted")
+            return redirect(url_for('index'))
+        return render_template('delete.html',form= form, task_id = task.id, title = task.title)
+    flash("Task doesnot exist")
+    return redirect(url_for('index'))
+```
+* There may be some edits needed in the `delete.html`, `index.html`(change the href of delete link) according to your needs if error arises.
+* Now our website is fully functional with functionalities of **add, edit, delete**.
+
+ ### Now you will have knowledge on creating ***basic webapps with flask***, including  
+- how to use ***routes***
+- how to write html with ***jinja templates***
+- how to create ***dynamic html*** pages
+- how to work with ***SQLAlchemy***
+- how to create ***models*** for our db
+- how to create forms using ***wtflask forms*** with flask_wtf
